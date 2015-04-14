@@ -400,17 +400,18 @@ function modelDataPointPrint(point) {
 				.attr("height", displayCount * this.state.widthOfSingleModel);
 			var rectHeight = this._createRectangularContainers();
 
-			this._createXRegion();
-			this._addGradients();
-
 			this._addPhenogridControls();
 
+			this._createXRegion();
+			this._createYRegion();
 			this._updateAxes();
 
+			this._addGradients();
+			
 			this._createGridlines();
 			this._createModelRects();
-			this._highlightSpecies();
-			this._createYRegion();
+			this._highlightSpecies();	
+			
 			this._createOverviewSection();
 
 			var height = rectHeight + 40;
@@ -553,7 +554,6 @@ function modelDataPointPrint(point) {
 		if (this.state.invertAxis){
 			this.state.xAxis = this.state.phenotypeListHash;
 			this.state.yAxis = this.state.modelListHash;
-
 		} else {
 			this.state.xAxis = this.state.modelListHash;
 			this.state.yAxis = this.state.phenotypeListHash;
@@ -586,12 +586,6 @@ function modelDataPointPrint(point) {
 		var overviewRegionSize = self.state.globalViewSize;
 		if (this.state.yAxis.size() < yCount) {
 			overviewRegionSize = self.state.reducedGlobalViewSize;
-		}
-
-		// create the legend for the modelScores
-		// [vaa12] This should be tried to move out.  No real need for it to be in this function
-		if (!this.state.invertAxis){
-			self._createModelScoresLegend();
 		}
 
 		// make it a bit bigger to ccont for widths
@@ -855,6 +849,8 @@ function modelDataPointPrint(point) {
 	},
 
 	// Returns an sorted array of IDs from an arrayed Hashtable, but meant for non-overview display based off pos
+	// [vaa12] the reason there are two different ones is how phenogrid prefers displays. _getSortedID can display items that have a pos
+	// between 7-37 and keep them numbered as such, where in strict, it will reset 7 to 0, so they will be numbered 0-30
 	_getSortedIDList: function(hashArray){
 		var resultArray = [];
 		for (var j in hashArray) {
@@ -996,7 +992,7 @@ function modelDataPointPrint(point) {
 		} else if (this.state.owlSimFunction === 'compare' || this.state.owlSimFunction == 'exomiser'){
 			this.state.targetSpeciesName = "Homo sapiens";
 		} 
-		
+
 		if (!this.state.hpoCacheBuilt){
 			this.state.hpoCacheHash = new Hashtable();
 			this.state.hpoCacheLabels = new Hashtable();
@@ -1016,7 +1012,9 @@ function modelDataPointPrint(point) {
 			this._finishOverviewLoad();
 		} else {
 			this._loadSpeciesData(this.state.targetSpeciesName);
-			//this._loadSpeciesData(this.state.targetSpeciesName,150);
+			// [vaa12] line below can be used to force a different limit.  It can be loaded above the API default (100) but has a
+			// noticable time delay when trying to load.  There may be a conflict at the API level when trying to go higher than default
+			//this._loadSpeciesData(this.state.targetSpeciesName,20);
 			this._finishLoad();
 		}
 
@@ -2137,7 +2135,7 @@ function modelDataPointPrint(point) {
 	},
 
 	_showModelData: function(d, obj) {
-		var retData, modelInfo, phenoInfo, prefix, modelLabel, phenoLabel;
+		var retData, prefix, modelLabel, phenoLabel;
 
 		var yInfo = this._getAxisData(d.yID); 
 		var xInfo = this._getAxisData(d.xID);
@@ -2496,9 +2494,9 @@ function modelDataPointPrint(point) {
 		this._clearXLabels();
 
 		this._createXRegion();
-		this._createModelRects();
-		this._highlightSpecies();
 		this._createYRegion();
+		this._highlightSpecies();
+		this._createModelRects();
 
 		/*
 		 * this must be initialized here after the _createModelLabels, or the mouse events don't get
@@ -2763,8 +2761,10 @@ function modelDataPointPrint(point) {
 
 		this._createXLabels(self,mods);
 		this._createXLines();
+		//[vaa12] These now darken when mini-map is moved
 		if (!this.state.invertAxis) {
 			this._createTextScores();
+			this._createModelScoresLegend();
 		}
 		if (this.state.owlSimFunction != 'compare' && this.state.owlSimFunction != 'exomiser'){
 			this._createOverviewSpeciesLabels();
