@@ -3623,27 +3623,29 @@ function modelDataPointPrint(point) {
 
 		// check cached hashtable first 
 		var cachedTargets = this.state.expandedHash.get(modelData.id);
+		var savedData = null;
 
 		// if cached info not found, try get targets
 		if (cachedTargets == null) {
 	
+			// get targets
 			returnObj = this.state.expander.getTargets({modelData: modelData, parentRef: this});
 
-			// save the results to the expandedHash for later
-			if (returnObj == null) {
-				returnObj = [];  // just create an empty array
-				saveIt = {expanded: false, data: returnObj}; 	
-				refresh = false;						
-			} else {
-				saveIt = {expanded: true, data: returnObj};  // in expanded state by default
+			if (returnObj != null) {
+				// save the results to the expandedHash for later
+				if (returnObj.targets == null && returnObj.compareScores == null) {
+					savedData = {expanded: false, data: returnObj}; 	
+				} else {
+					savedData = {expanded: true, data: returnObj};  // in expanded state by default
+				}
+				this.state.expandedHash.put(modelData.id, savedData);
 			}
-			this.state.expandedHash.put(modelData.id, saveIt);
-		
 		} else {
 			returnObj = cachedTargets.data;  // just reuse what we cached
 		}
 
-		if (refresh) {
+		if (returnObj != null && returnObj.targets != null && returnObj.compareScores != null) { 
+
 			// update the model data 
 			for (var idx in returnObj.compareScores.b) {
 				var b = returnObj.compareScores.b;
@@ -3661,6 +3663,8 @@ function modelDataPointPrint(point) {
 
 			console.log("updating display...");
 			this._processDisplay();
+		} else {
+			alert("No data found to expand targets");
 		}
 
 		$('#wait').hide();

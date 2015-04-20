@@ -168,8 +168,7 @@ Expander.prototype = {
 			var modelData = parms.modelData
 			this.parentObject = parms.parentRef.state;  // instance of phenoGrid
 			targets = this[func](modelData);   
-		} catch(err) { console.log("No function def available for " + func);
-						console.log(err.message);}
+		} catch(err) { console.log(err.message);}
 		return targets;
 	},
 
@@ -182,12 +181,13 @@ Expander.prototype = {
 			var genotypeLabelHashtable = new Hashtable();
 
 			// go get the assocated genotypes
-			var url = this.parentObject.serverURL+"/gene/"+ modelInfo.id.replace('_', ':') + ".json";		
+			//var url = this.parentObject.serverURL+"/gene/"+ modelInfo.id.replace('_', ':') + ".json";		
 			//var url = this.state.serverURL+"/genotypes/"+ modelInfo.id.replace('_', ':');
 			
 			// CALL THAT SHOULD WORK FROM ROSIE; NICOLE WILL WRAP THIS IN THE APP LAYER 4/9/15			
-			// var url = "http://rosie.crbs.ucsd.edu:9000/scigraph/dynamic/genes/" + modelInfo.id.replace('_', ':') +
-			// 			"/genotype/targets.json";
+			var url = this.parentObject.serverURL + "/scigraph/dynamic/genes/" + modelInfo.id.replace('_', ':') +
+			 			"/genotypes/targets.json";
+			//http://rosie.crbs.ucsd.edu:9000/scigraph/dynamic/genes/MGI:101926/genotypes/targets.json 
 			// THIS SHOULD WORK
 			//http://tartini.crbs.ucsd.edu/dynamic/genes/NCBIGene:14183/genotypes/nodes.json
 			console.log("Getting Gene " + url);
@@ -215,9 +215,9 @@ Expander.prototype = {
 			 	return null;
 			}
 
-			genoTypeAssociations = res.genotype_associations;  // this works with the /gene call above
+			//genoTypeAssociations = res.genotype_associations;  // this works with old /gene call above
 			// UNCOMMENT LATER WHEN SCIGRAPH GETS WORKING MORE CONSISTANT
-			//genoTypeAssociations = res;  // this is for the /scigraph call
+			genoTypeAssociations = res.nodes;  // this is for the /scigraph call
 
 			if (genoTypeAssociations !== null && genoTypeAssociations.length > 5) {
 				console.log("There are " + genoTypeAssociations.length + " associated genotypes");
@@ -252,12 +252,12 @@ Expander.prototype = {
 			ctr = 0;
 			// assemble a list of genotypes
 			for (var g in genoTypeAssociations) {
-				//	_genotypeIds = _genotypeIds + genoTypeAssociations[g].genotype.id + "+";
-				genotypeIds += genoTypeAssociations[g].genotype.id + "+";
+				//genotypeIds += genoTypeAssociations[g].genotype.id + "+";
+				genotypeIds += genoTypeAssociations[g].id + "+";
 				// fill a hashtable with the labels so we can quickly get back to them later
-				//var tmpLabel = this._encodeHtmlEntity(genoTypeAssociations[g].genotype.label); 
-				//genotypeLabelHashtable.put(genoTypeAssociations[g].genotype.id, tmpLabel);
-				var tmpLabel = this.encodeHtmlEntity(genoTypeAssociations[g].genotype.label);  
+				//var tmpLabel = this._encodeHtmlEntity(genoTypeAssociations[g].genotype.label); 				
+				//var tmpLabel = this.encodeHtmlEntity(genoTypeAssociations[g].genotype.label); // scigraph
+				var tmpLabel = this.encodeHtmlEntity(genoTypeAssociations[g].lbl);  				
 				tmpLabel = (tmpLabel === null ? "undefined" : tmpLabel);
 				genotypeLabelHashtable.put(genoTypeAssociations[g].id, tmpLabel);
 				ctr++;
@@ -289,7 +289,7 @@ Expander.prototype = {
 				} 
 			});
 
-			if (typeof (compareScores)  !== 'undefined') {
+			if (compareScores != null) {
 				var iPosition = 1;
 				// rebuild the model list with genotypes
 				for (var idx in compareScores.b) {
@@ -314,9 +314,6 @@ Expander.prototype = {
 					// Hack: need to fix the label because genotypes have IDs as labels
 					compareScores.b[idx].label = genotypeLabelHashtable.get(compareScores.b[idx].id);
 
-					// load these into model data;  MKD CAN WE DO THIS BACK IN PHENOGRID.JS?
-					// i'm passing this back through the returnObj
-					//this.parentObject.loadDataForModel(compareScores.b[idx]);
 					iPosition++;
 				}			
 			} else {
