@@ -111,7 +111,7 @@ gene: function(tooltip) {
 //					appearanceOverrides.offset = (gtCached.genoTypes.size() + (gtCached.genoTypes.size() * 0.40));   // magic numbers for extending the highlight
 			returnHtml = "<br>Number of expanded genotypes: " + gtCached.genoTypes.size() +
 				 "<br/><br/>Click button to <b>collapse</b> associated genotypes &nbsp;&nbsp;" +
-				 "<button class=\"collapsebtn\" type=\"button\" onClick=\"self._collapseGenotypes('" + tooltip.id + "')\">" +
+				 "<button class=\"collapsebtn\" type=\"button\" onClick=\"self._collapse('" + tooltip.id + "')\">" +
 				 "</button>";
 		} else {
 			if (gtCached !== null) {

@@ -3364,14 +3364,14 @@ function modelDataPointPrint(point) {
 
 
 
-	// collapse the expanded items for the current selected model
-	_collapseGenotypes: function(curModel) {
+	// collapse the expanded items for the current selected model targets
+	_collapse: function(curModel) {
 		var modelInfo = {id: curModel, d: this.state.modelListHash.get(curModel)};
 
 		// check cached hashtable first 
 		var cachedScores = this.state.expandedHash.get(modelInfo.id);
 
-		// if found just return genotypes scores
+		// if found just return scores
 		if (cachedScores !== null && cachedScores.expanded) {
 			this.state.modelListHash = this._removalFromModelList(cachedScores);
 
