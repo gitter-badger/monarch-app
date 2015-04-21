@@ -1127,7 +1127,8 @@ function modelDataPointPrint(point) {
 						}
 					}
 
-					hashData = {"label": item.label, "species": species, "taxon": item.taxon.id, "type": type, "pos": parseInt(posID), "rank": parseInt(idx), "score": item.score.score};
+					hashData = {"label": item.label, "species": species, "taxon": item.taxon.id, 
+								"type": type, "pos": parseInt(posID), "rank": parseInt(idx), "score": item.score.score};
 					this.state.modelListHash.put(ID, hashData);
 					this.loadDataForModel(ID, item);
 					posID++;
@@ -1214,7 +1215,9 @@ function modelDataPointPrint(point) {
 					modelPoint = new modelDataPoint(this._getConceptId(modelID), this._getConceptId(curr_row.a.id));
 				}
 				this._updateSortVals(this._getConceptId(curr_row.a.id), parseFloat(curr_row.lcs.IC));
-				hashData = {"value": lcs, "subsumer_label": curr_row.lcs.label, "subsumer_id": this._getConceptId(curr_row.lcs.id), "subsumer_IC": parseFloat(curr_row.lcs.IC), "b_label": curr_row.b.label, "b_id": this._getConceptId(curr_row.b.id), "b_IC": parseFloat(curr_row.b.IC)};
+				hashData = {"value": lcs, "subsumer_label": curr_row.lcs.label, "subsumer_id": this._getConceptId(curr_row.lcs.id),
+				 "subsumer_IC": parseFloat(curr_row.lcs.IC), "b_label": curr_row.b.label, 
+				 "b_id": this._getConceptId(curr_row.b.id), "b_IC": parseFloat(curr_row.b.IC)};
 				this.state.modelDataHash.put(modelPoint, hashData);
 			}
 		}
@@ -3508,7 +3511,10 @@ function modelDataPointPrint(point) {
 				modelPoint = new modelDataPoint(this.state.modelData[i].model_id, this.state.modelData[i].id_a);
 			}
 			this._updateSortVals(this.state.modelData[i].id_a, this.state.modelData[i].subsumer_IC);
-			hashData = {"value": this.state.modelData[i].value, "subsumer_label": this.state.modelData[i].subsumer_label, "subsumer_id": this.state.modelData[i].subsumer_id, "subsumer_IC": this.state.modelData[i].subsumer_IC, "b_label": this.state.modelData[i].label_b, "b_id": this.state.modelData[i].id_b, "b_IC": this.state.modelData[i].IC_b};
+			hashData = {"value": this.state.modelData[i].value, "subsumer_label": this.state.modelData[i].subsumer_label, 
+			"subsumer_id": this.state.modelData[i].subsumer_id, "subsumer_IC": this.state.modelData[i].subsumer_IC, 
+			"b_label": this.state.modelData[i].label_b, "b_id": this.state.modelData[i].id_b, 
+			"b_IC": this.state.modelData[i].IC_b};
 			this.state.modelDataHash.put(modelPoint, hashData);
 		}
 	},
@@ -3633,7 +3639,7 @@ function modelDataPointPrint(point) {
 
 			if (returnObj != null) {
 				// save the results to the expandedHash for later
-				if (returnObj.targets == null && returnObj.compareScores == null) {
+				if (returnObj.targets == null ) { //&& returnObj.compareScores == null) {
 					savedData = {expanded: false, data: returnObj}; 	
 				} else {
 					savedData = {expanded: true, data: returnObj};  // in expanded state by default
@@ -3644,9 +3650,9 @@ function modelDataPointPrint(point) {
 			returnObj = cachedTargets.data;  // just reuse what we cached
 		}
 
-		if (returnObj != null && returnObj.targets != null && returnObj.compareScores != null) { 
+		if (returnObj != null && returnObj.targets != null ) { //&& returnObj.compareScores != null) { 
 
-			// update the model data 
+			// update the model data CHANGE THIS HERE!!!!
 			for (var idx in returnObj.compareScores.b) {
 				var b = returnObj.compareScores.b;
 				this._loadDataForModel(b);

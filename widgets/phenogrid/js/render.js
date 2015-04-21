@@ -294,6 +294,9 @@ Expander.prototype = {
 				// rebuild the model list with genotypes
 				for (var idx in compareScores.b) {
 					var newGtLabel = genotypeLabelHashtable.get(compareScores.b[idx].id); 
+					// Hack: need to fix the label because genotypes have IDs as labels
+					compareScores.b[idx].label = genotypeLabelHashtable.get(compareScores.b[idx].id);
+
 					var gt = {
 					parent: modelInfo.id,
 					label: (newGtLabel !== null?newGtLabel:compareScores.b[idx].label), // if label was null, then use previous fixed label
@@ -305,14 +308,13 @@ Expander.prototype = {
 					taxon: compareScores.b[idx].taxon.id,
 					pos: (modelInfo.d.pos + iPosition),
 					count: modelInfo.d.count,
-					sum: modelInfo.d.sum
+					sum: modelInfo.d.sum,
+					b: compareScores.b[idx]  // embed the origial compare data (may be able to remove this as we refactor)
 					};
 
 					targets.put( compareScores.b[idx].id.replace('_', ':'), gt);
 					//genoTypeList.put( this._getConceptId(compareScores.b[idx].id), gt);
 
-					// Hack: need to fix the label because genotypes have IDs as labels
-					compareScores.b[idx].label = genotypeLabelHashtable.get(compareScores.b[idx].id);
 
 					iPosition++;
 				}			
@@ -320,7 +322,7 @@ Expander.prototype = {
 				targets = null;
 			}
 			// return a complex object with targets and scores
-			returnObj = {targets: targets, scores: compareScores};
+			returnObj = {targets: targets} ///, scores: compareScores};
 		return returnObj;
 	},
 	encodeHtmlEntity: function(str) {
