@@ -23,7 +23,7 @@
     "npm": ">= 2.7.4"
   },
   "dependencies": {
-    "local-phenogrid": "*",
+    "phenogrid": "*",
     "underscore": "1.8.3"
   },
   "devDependencies": {
