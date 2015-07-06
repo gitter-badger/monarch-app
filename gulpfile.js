@@ -65,6 +65,9 @@ gulp.task('install-phenogrid', function(cb) {
 
     gulp.src('node_modules/local-phenogrid/index.html')
 	.pipe(gulp.dest('./dist/phenogrid'));
+
+    gulp.src('node_modules/local-phenogrid/index_byo.html')
+	.pipe(gulp.dest('./dist/phenogrid'));
 });
 
 
